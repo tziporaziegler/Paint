@@ -2,16 +2,18 @@ package shapes;
 
 import java.awt.Graphics2D;
 
-public class RectFill extends DrawableShape {
+public class Dropper extends DrawableShape {
 
 	@Override
 	public void draw(Graphics2D g2d, int x, int y, int width, int height) {
-		g2d.fillRect(x, y, width, height);
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void drawTemp(Graphics2D g2d) {
-		g2d.fillRect(tempX, tempY, tempW, tempH);
+		// TODO Auto-generated method stub
+
 	}
-	
+
 }

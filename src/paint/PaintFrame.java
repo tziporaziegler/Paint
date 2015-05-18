@@ -12,6 +12,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -24,6 +25,7 @@ import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import shapes.Eraser;
 import shapes.Oval;
 import shapes.OvalFill;
 import shapes.Pencil;
@@ -133,11 +135,14 @@ public class PaintFrame extends JFrame {
 	};
 
 	private void addShapes() {
+		// TODO add Line
 		eastPanel.add(new ShapeButton(new Pencil(), listener, "\u270E"));
 		eastPanel.add(new ShapeButton(new Rect(), listener, "\u25A2"));
 		eastPanel.add(new ShapeButton(new RectFill(), listener, "\u25FC"));
 		eastPanel.add(new ShapeButton(new Oval(), listener, "\u25EF"));
 		eastPanel.add(new ShapeButton(new OvalFill(), listener, "\u2B24"));
+		eastPanel.add(new ShapeButton(new Eraser(), listener, new ImageIcon(getClass().getResource("pics/eraser.png"))));
+		eastPanel.add(new DropperButton(listener));
 	}
 
 	private void addLineWidths() {
@@ -145,6 +150,7 @@ public class PaintFrame extends JFrame {
 		eastPanel.add(new WidthButton(5, canvas, "\u2500"));
 		eastPanel.add(new WidthButton(7, canvas, "\u2501"));
 		eastPanel.add(new WidthButton(9, canvas, "\u2501"));
+		eastPanel.add(new WidthButton(canvas, "other"));
 	}
 
 	private void addColorChooser() {

@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.border.EmptyBorder;
 
 import shapes.DrawableShape;
 
@@ -27,6 +28,8 @@ public class ShapeButton extends JButton {
 	public ShapeButton(DrawableShape shape, DrawListener listener, ImageIcon image) {
 		this(shape, listener);
 		setIcon(image);
+		setBackground(null);
+		setBorder(new EmptyBorder(0, 0, 0, 0));
 	}
 
 	ActionListener shapeListen = new ActionListener() {

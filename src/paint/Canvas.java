@@ -18,10 +18,10 @@ public class Canvas extends JPanel {
 
 	private Color color;
 	private Stroke stroke;
-	private DrawableShape shape;
 
-	private boolean tempShape;
-	private DrawListener tempListener;
+	private DrawableShape tempShape;
+
+	private Color bkgdColor = Color.WHITE;
 
 	public Canvas(int width, int height) {
 		// use buffer to save pixels so still there after minimize
@@ -31,7 +31,7 @@ public class Canvas extends JPanel {
 		imageGraphics = (Graphics2D) image.getGraphics();
 
 		// clear screen and start it at white instead of black
-		updateColor(Color.WHITE);
+		updateColor(bkgdColor);
 		imageGraphics.fillRect(0, 0, width, height);
 		updateColor(Color.BLACK);
 		updateStrokeWidth(2);
@@ -42,6 +42,7 @@ public class Canvas extends JPanel {
 		super.paintComponent(g);
 
 		Graphics2D g2d = (Graphics2D) g;
+
 		g2d.setColor(color);
 		g2d.setStroke(stroke);
 
@@ -49,8 +50,8 @@ public class Canvas extends JPanel {
 		// if small image, don't care when done, so can leave observer as null
 		g2d.drawImage(image, 0, 0, null);
 
-		if (tempShape) {
-			tempListener.drawTempShape(g2d);
+		if (tempShape != null) {
+			tempShape.drawTemp(g2d);
 		}
 	}
 
@@ -79,16 +80,12 @@ public class Canvas extends JPanel {
 		return imageGraphics;
 	}
 
-	// TODO update shape in canvas instead of listener
-	// so don't need to send in Listener
-	// and Canvas takes care of temp shapes
-	
-	// public void updateShape(DrawableShape shape){
-	// this.shape = shape;
-	// }
+	public void setTempShape(DrawableShape shape) {
+		tempShape = shape;
+	}
 
-	public void setTempShape(boolean tempShape, DrawListener tempListener) {
-		this.tempShape = tempShape;
-		this.tempListener = tempListener;
+	public void resetGraphics() {
+		imageGraphics.setColor(color);
+		imageGraphics.setStroke(stroke);
 	}
 }

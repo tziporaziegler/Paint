@@ -8,3 +8,8 @@ public class Paint {
 		new PaintFrame();
 	}
 }
+// TODO SPRAY PAINT
+// GRID OPTION
+// FILL
+// Full screen mode
+// canvas resizable

@@ -1,13 +1,18 @@
 package paint;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JLabel;
 
 import shapes.DrawableShape;
+import shapes.Eraser;
 import shapes.Pencil;
 
 public class DrawListener implements MouseListener, MouseMotionListener {
@@ -17,16 +22,15 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 	private Graphics2D imageGraphics;
 	private DrawableShape shape;
 	private boolean isPencil;
+	private boolean isEraser;
+	private Stroke eraserStroke = new BasicStroke(30);
+	private Color bkgdColor = Color.WHITE;
+	private boolean dropperSelected;
 
 	private int lastX;
 	private int lastY;
 	private int firstX;
 	private int firstY;
-
-	private int tempX;
-	private int tempY;
-	private int tempW;
-	private int tempH;
 
 	// use offset to start drawing at tip of mouse pointer to counteract size of title and menu bars
 	// TODO get sizes from PaintFrame after set up menu
@@ -41,6 +45,17 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		if (dropperSelected) {
+			// get color of pixel in image that clicked on
+			BufferedImage image = canvas.getImage();
+			int clr = image.getRGB(e.getX(), e.getY());
+			int red = (clr & 0x00ff0000) >> 16;
+			int green = (clr & 0x0000ff00) >> 8;
+			int blue = clr & 0x000000ff;
+			canvas.updateColor(new Color(red, green, blue));
+			dropperSelected = false;
+		}
+
 		lastX = e.getX();
 		lastY = e.getY() - OFFSET;
 
@@ -60,12 +75,7 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 		int x = e.getX();
 		int y = e.getY() - OFFSET;
 
-		if (isPencil) {
-			draw(x, y, false);
-		}
-		else {
-			draw(x, y, true);
-		}
+		draw(x, y, !(isPencil || isEraser));
 
 		lastX = x;
 		lastY = y;
@@ -73,55 +83,59 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (!isPencil) {
-			draw(e.getX(), e.getY() - OFFSET, false);
-		}
+		draw(e.getX(), e.getY() - OFFSET, false);
 	}
 
 	private void draw(int x, int y, boolean temp) {
-		if (isPencil) {
-			imageGraphics.drawLine(lastX, lastY, x, y);
+		if (!dropperSelected) {
+			if (isPencil) {
+				imageGraphics.drawLine(lastX, lastY, x, y);
+			}
+			else if (isEraser) {
+				imageGraphics.setColor(bkgdColor);
+				imageGraphics.setStroke(eraserStroke);
+				imageGraphics.drawLine(lastX, lastY, x, y);
+				canvas.resetGraphics();
+			}
+			else {
+				int width = x - firstX;
+				int height = y - firstY;
+				int widthABS = Math.abs(width);
+				int heightABS = Math.abs(height);
+				x = width > 0 ? firstX : lastX;
+				y = height > 0 ? firstY : lastY;
+
+				if (temp) {
+					canvas.setTempShape(shape);
+					shape.setTemp(x, y, widthABS, heightABS);
+				}
+				else {
+					canvas.setTempShape(null);
+					shape.draw(imageGraphics, x, y, widthABS, heightABS);
+				}
+			}
+			canvas.repaint();
 		}
-		else {
-			int width = x - firstX;
-			int height = y - firstY;
-			x = width > 0 ? firstX : lastX;
-			y = height > 0 ? firstY : lastY;
-			drawShape(x, y, Math.abs(width), Math.abs(height), temp);
-		}
-		canvas.repaint();
 	}
 
-	private void drawShape(int x, int y, int width, int height, boolean temp) {
-		canvas.setTempShape(temp, this);
-
-		if (temp) {
-			tempX = x;
-			tempY = y;
-			tempW = width;
-			tempH = height;
-		}
-		else {
-			drawAShape(x, y, width, height, imageGraphics);
-		}
-	}
-
-	public void drawTempShape(Graphics2D g) {
-		drawAShape(tempX, tempY, tempW, tempH, g);
-	}
-
-	public void drawAShape(int x, int y, int width, int height, Graphics2D g2d) {
-		shape.draw(g2d, x, y, width, height);
-	}
-
+	// FIXME get rid of instanceof
 	public void updateShape(DrawableShape shape) {
 		this.shape = shape;
-		if ((shape instanceof Pencil)) {
+		if (shape instanceof Pencil) {
 			isPencil = true;
+		}
+		else if (shape instanceof Eraser) {
+			isEraser = true;
+			isPencil = false;
 		}
 		else {
 			isPencil = false;
+			isEraser = false;
 		}
+	}
+
+	public void selectDropper() {
+		dropperSelected = true;
 	}
 
 	@Override
@@ -140,4 +154,5 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 	@Override
 	public void mouseExited(MouseEvent e) {
 	}
+
 }
