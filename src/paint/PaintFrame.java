@@ -2,6 +2,7 @@ package paint;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 
 import javax.swing.Box;
@@ -39,7 +40,7 @@ public class PaintFrame extends JFrame {
 
 	public PaintFrame() {
 		int width = 800;
-		int height = 600;
+		int height = 620;
 		setSize(width, height);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
@@ -47,7 +48,7 @@ public class PaintFrame extends JFrame {
 		setResizable(false);
 		setLayout(new BorderLayout());
 
-		canvas = new Canvas(width - 100, height - 160);
+		canvas = new Canvas(width - 100, height - 200);
 		add(canvas, BorderLayout.CENTER);
 
 		// create color chooser with initial color set to black
@@ -130,7 +131,10 @@ public class PaintFrame extends JFrame {
 		AbstractColorChooserPanel[] panels = chooser.getChooserPanels();
 		AbstractColorChooserPanel[] newPanels = { panels[0] };
 		chooser.setChooserPanels(newPanels);
-		chooser.setPreviewPanel(new JPanel());
+
+		JLabel preview = new JLabel("\u25FC\u25FC\u25FC\u25FC\u25FC", JLabel.CENTER);
+		preview.setFont(new Font("Serif", Font.BOLD, 18));
+		chooser.setPreviewPanel(preview);
 
 		chooser.getSelectionModel().addChangeListener(colorChange);
 		southPanel.add(chooser, BorderLayout.WEST);

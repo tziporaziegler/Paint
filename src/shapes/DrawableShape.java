@@ -3,20 +3,17 @@ package shapes;
 import java.awt.Graphics2D;
 
 public abstract class DrawableShape {
-	protected int tempX;
-	protected int tempY;
-	protected int tempW;
-	protected int tempH;
+	protected int x;
+	protected int y;
+	protected int width;
+	protected int height;
 
-	public abstract void draw(Graphics2D g2d, int x, int y, int width, int height);
+	public abstract void draw(Graphics2D g2d);
 	
-	public abstract void drawTemp(Graphics2D g2d);
-	
-	public void setTemp(int tempX, int tempY, int tempW, int tempH){
-		this.tempX = tempX;
-		this.tempY = tempY;
-		this.tempW = tempW;
-		this.tempH = tempH;
+	public void setPoints(int x, int y, int width, int height){
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
 	}
-
 }

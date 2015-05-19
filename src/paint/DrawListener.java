@@ -27,7 +27,6 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 
 	public final static float ERASER_HEIGHT = 30;
 	private Stroke eraserStroke = new BasicStroke(ERASER_HEIGHT, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-	private Color bkgdColor = Color.WHITE;
 	private boolean dropperSelected;
 
 	private int lastX;
@@ -53,10 +52,10 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 			imageGraphics.drawLine(lastX, lastY, x, y);
 		}
 		else if (shape instanceof Eraser) {
-			imageGraphics.setColor(bkgdColor);
+			imageGraphics.setColor(Canvas.BKGD_COLOR);
 			imageGraphics.setStroke(eraserStroke);
 			imageGraphics.drawLine(lastX, lastY, x, y);
-			shape.setTemp(x, y, 30, 30);
+			shape.setPoints(x, y, 30, 30);
 			canvas.setTempShape(shape);
 			canvas.resetGraphics();
 		}
@@ -71,19 +70,21 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 			if (temp) {
 				canvas.setTempShape(shape);
 				if (shape instanceof Line) {
-					shape.setTemp(lastX, lastY, firstX, firstY);
+					shape.setPoints(lastX, lastY, firstX, firstY);
 				}
 				else {
-					shape.setTemp(x, y, widthABS, heightABS);
+					shape.setPoints(x, y, widthABS, heightABS);
 				}
 			}
 			else {
 				canvas.setTempShape(null);
 				if (shape instanceof Line) {
-					shape.draw(imageGraphics, lastX, lastY, firstX, firstY);
+					shape.setPoints(lastX, lastY, firstX, firstY);
+					shape.draw(imageGraphics);
 				}
 				else {
-					shape.draw(imageGraphics, x, y, widthABS, heightABS);
+					shape.setPoints(x, y, widthABS, heightABS);
+					shape.draw(imageGraphics);
 				}
 			}
 		}
@@ -105,8 +106,10 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 		int red = (clr & 0x00ff0000) >> 16;
 		int green = (clr & 0x0000ff00) >> 8;
 		int blue = clr & 0x000000ff;
-		canvas.updateColor(new Color(red, green, blue));
-		chooser.setColor(red, green, blue);
+		Color color = new Color(red, green, blue);
+		canvas.updateColor(color);
+		chooser.setColor(color);
+		chooser.getPreviewPanel().setBackground(color);
 		dropperSelected = false;
 	}
 

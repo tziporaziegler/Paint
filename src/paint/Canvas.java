@@ -21,7 +21,7 @@ public class Canvas extends JPanel {
 
 	private DrawableShape tempShape;
 
-	private Color bkgdColor = Color.WHITE;
+	final static Color BKGD_COLOR = Color.WHITE;
 
 	public Canvas(int width, int height) {
 		// use buffer to save pixels so still there after minimize
@@ -31,7 +31,7 @@ public class Canvas extends JPanel {
 		imageGraphics = (Graphics2D) image.getGraphics();
 
 		// clear screen and start it at white instead of black
-		updateColor(bkgdColor);
+		updateColor(BKGD_COLOR);
 		imageGraphics.fillRect(0, 0, width, height);
 		updateColor(Color.BLACK);
 		updateStrokeWidth(2);
@@ -51,15 +51,17 @@ public class Canvas extends JPanel {
 		g2d.drawImage(image, 0, 0, null);
 
 		if (tempShape != null) {
-			tempShape.drawTemp(g2d);
+			tempShape.draw(g2d);
 		}
 	}
 
+	// method called by JColorChooser ChangeListener
 	public void updateColor(Color color) {
 		this.color = color;
 		imageGraphics.setColor(color);
 	}
 
+	// method called by WidthButton ActionListener
 	public void updateStrokeWidth(int width) {
 		stroke = new BasicStroke(width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 		imageGraphics.setStroke(stroke);
@@ -80,6 +82,7 @@ public class Canvas extends JPanel {
 		return imageGraphics;
 	}
 
+	// when repaint, paint tempShape if one exists
 	public void setTempShape(DrawableShape shape) {
 		tempShape = shape;
 	}

@@ -25,6 +25,7 @@ public class SaveListener implements ActionListener {
 		addFilter("BMP", "bmp");
 		addFilter("JPG", "jpg");
 		addFilter("JPEG", "jpeg");
+		addFilter("GIF", "gif");
 	}
 
 	@Override
@@ -43,7 +44,6 @@ public class SaveListener implements ActionListener {
 			catch (IOException e1) {
 				e1.printStackTrace();
 			}
-
 		}
 	}
 
@@ -51,5 +51,4 @@ public class SaveListener implements ActionListener {
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(description, extentions);
 		chooser.addChoosableFileFilter(filter);
 	}
-
 }
