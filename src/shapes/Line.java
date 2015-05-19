@@ -11,7 +11,7 @@ public class Line extends DrawableShape {
 
 	@Override
 	public void drawTemp(Graphics2D g2d) {
-		g2d.drawLine(tempX, tempH, tempW, tempH);
+		g2d.drawLine(tempX, tempY, tempW, tempH);
 	}
 
 }

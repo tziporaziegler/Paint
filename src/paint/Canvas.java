@@ -61,7 +61,7 @@ public class Canvas extends JPanel {
 	}
 
 	public void updateStrokeWidth(int width) {
-		stroke = new BasicStroke(width);
+		stroke = new BasicStroke(width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 		imageGraphics.setStroke(stroke);
 	}
 

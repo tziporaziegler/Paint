@@ -9,21 +9,24 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 
+import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 
 import shapes.DrawableShape;
 import shapes.Eraser;
+import shapes.Line;
 import shapes.Pencil;
 
 public class DrawListener implements MouseListener, MouseMotionListener {
 	private Canvas canvas;
+	private JColorChooser chooser;
 	private JLabel location;
 
 	private Graphics2D imageGraphics;
 	private DrawableShape shape;
-	private boolean isPencil;
-	private boolean isEraser;
-	private Stroke eraserStroke = new BasicStroke(30);
+
+	public final static float ERASER_HEIGHT = 30;
+	private Stroke eraserStroke = new BasicStroke(ERASER_HEIGHT, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	private Color bkgdColor = Color.WHITE;
 	private boolean dropperSelected;
 
@@ -37,27 +40,84 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 	private final int SIZE_OF_MENUBAR = 23;
 	private final int OFFSET = SIZE_OF_MENUBAR + 25;
 
-	public DrawListener(Canvas canvas, JLabel location) {
+	public DrawListener(Canvas canvas, JColorChooser chooser, JLabel location) {
 		this.canvas = canvas;
+		this.chooser = chooser;
 		this.location = location;
-		isPencil = true;
+		shape = new Pencil();
+	}
+
+	// FIXME remove instance of
+	private void draw(int x, int y, boolean temp) {
+		if (shape instanceof Pencil) {
+			imageGraphics.drawLine(lastX, lastY, x, y);
+		}
+		else if (shape instanceof Eraser) {
+			imageGraphics.setColor(bkgdColor);
+			imageGraphics.setStroke(eraserStroke);
+			imageGraphics.drawLine(lastX, lastY, x, y);
+			shape.setTemp(x, y, 30, 30);
+			canvas.setTempShape(shape);
+			canvas.resetGraphics();
+		}
+		else {
+			int width = x - firstX;
+			int height = y - firstY;
+			int widthABS = Math.abs(width);
+			int heightABS = Math.abs(height);
+			x = width > 0 ? firstX : lastX;
+			y = height > 0 ? firstY : lastY;
+
+			if (temp) {
+				canvas.setTempShape(shape);
+				if (shape instanceof Line) {
+					shape.setTemp(lastX, lastY, firstX, firstY);
+				}
+				else {
+					shape.setTemp(x, y, widthABS, heightABS);
+				}
+			}
+			else {
+				canvas.setTempShape(null);
+				if (shape instanceof Line) {
+					shape.draw(imageGraphics, lastX, lastY, firstX, firstY);
+				}
+				else {
+					shape.draw(imageGraphics, x, y, widthABS, heightABS);
+				}
+			}
+		}
+		canvas.repaint();
+	}
+
+	public void updateShape(DrawableShape shape) {
+		this.shape = shape;
+	}
+
+	public void selectDropper() {
+		dropperSelected = true;
+	}
+
+	private void updateDropperColor(int x, int y) {
+		// get color of pixel in image that clicked on
+		BufferedImage image = canvas.getImage();
+		int clr = image.getRGB(x, y);
+		int red = (clr & 0x00ff0000) >> 16;
+		int green = (clr & 0x0000ff00) >> 8;
+		int blue = clr & 0x000000ff;
+		canvas.updateColor(new Color(red, green, blue));
+		chooser.setColor(red, green, blue);
+		dropperSelected = false;
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (dropperSelected) {
-			// get color of pixel in image that clicked on
-			BufferedImage image = canvas.getImage();
-			int clr = image.getRGB(e.getX(), e.getY());
-			int red = (clr & 0x00ff0000) >> 16;
-			int green = (clr & 0x0000ff00) >> 8;
-			int blue = clr & 0x000000ff;
-			canvas.updateColor(new Color(red, green, blue));
-			dropperSelected = false;
-		}
-
 		lastX = e.getX();
 		lastY = e.getY() - OFFSET;
+
+		if (dropperSelected) {
+			updateDropperColor(lastX, lastY);
+		}
 
 		firstX = lastX;
 		firstY = lastY;
@@ -75,67 +135,32 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 		int x = e.getX();
 		int y = e.getY() - OFFSET;
 
-		draw(x, y, !(isPencil || isEraser));
+		if (dropperSelected) {
+			updateDropperColor(x, y);
+		}
+
+		draw(x, y, true);
 
 		lastX = x;
 		lastY = y;
 	}
 
+	// FIXME remove instanceof
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		draw(e.getX(), e.getY() - OFFSET, false);
-	}
+		int x = e.getX();
+		int y = e.getY();
 
-	private void draw(int x, int y, boolean temp) {
-		if (!dropperSelected) {
-			if (isPencil) {
-				imageGraphics.drawLine(lastX, lastY, x, y);
-			}
-			else if (isEraser) {
-				imageGraphics.setColor(bkgdColor);
-				imageGraphics.setStroke(eraserStroke);
-				imageGraphics.drawLine(lastX, lastY, x, y);
-				canvas.resetGraphics();
-			}
-			else {
-				int width = x - firstX;
-				int height = y - firstY;
-				int widthABS = Math.abs(width);
-				int heightABS = Math.abs(height);
-				x = width > 0 ? firstX : lastX;
-				y = height > 0 ? firstY : lastY;
-
-				if (temp) {
-					canvas.setTempShape(shape);
-					shape.setTemp(x, y, widthABS, heightABS);
-				}
-				else {
-					canvas.setTempShape(null);
-					shape.draw(imageGraphics, x, y, widthABS, heightABS);
-				}
-			}
+		if (shape instanceof Eraser) {
+			canvas.setTempShape(null);
 			canvas.repaint();
 		}
-	}
-
-	// FIXME get rid of instanceof
-	public void updateShape(DrawableShape shape) {
-		this.shape = shape;
-		if (shape instanceof Pencil) {
-			isPencil = true;
-		}
-		else if (shape instanceof Eraser) {
-			isEraser = true;
-			isPencil = false;
-		}
 		else {
-			isPencil = false;
-			isEraser = false;
+			if (dropperSelected) {
+				updateDropperColor(x, y);
+			}
+			draw(x, y - OFFSET, false);
 		}
-	}
-
-	public void selectDropper() {
-		dropperSelected = true;
 	}
 
 	@Override
@@ -145,6 +170,9 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		if (dropperSelected) {
+			updateDropperColor(e.getX(), e.getY());
+		}
 	}
 
 	@Override
