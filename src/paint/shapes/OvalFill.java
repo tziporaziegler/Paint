@@ -1,4 +1,4 @@
-package shapes;
+package paint.shapes;
 
 import java.awt.Graphics2D;
 

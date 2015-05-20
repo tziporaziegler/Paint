@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
-import shapes.DrawableShape;
+import paint.shapes.DrawableShape;
 
 public class Canvas extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -21,7 +21,7 @@ public class Canvas extends JPanel {
 
 	private DrawableShape tempShape;
 
-	final static Color BKGD_COLOR = Color.WHITE;
+	public final static Color BKGD_COLOR = Color.WHITE;
 
 	public Canvas(int width, int height) {
 		// use buffer to save pixels so still there after minimize

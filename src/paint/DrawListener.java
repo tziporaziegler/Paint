@@ -1,9 +1,7 @@
 package paint;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -12,10 +10,9 @@ import java.awt.image.BufferedImage;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 
-import shapes.DrawableShape;
-import shapes.Eraser;
-import shapes.Line;
-import shapes.Pencil;
+import paint.shapes.DrawableShape;
+import paint.shapes.Eraser;
+import paint.shapes.Pencil;
 
 public class DrawListener implements MouseListener, MouseMotionListener {
 	private Canvas canvas;
@@ -24,9 +21,7 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 
 	private Graphics2D imageGraphics;
 	private DrawableShape shape;
-
-	public final static float ERASER_HEIGHT = 30;
-	private Stroke eraserStroke = new BasicStroke(ERASER_HEIGHT, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	
 	private boolean dropperSelected;
 
 	private int lastX;
@@ -44,51 +39,6 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 		this.chooser = chooser;
 		this.location = location;
 		shape = new Pencil();
-	}
-
-	// FIXME remove instance of
-	private void draw(int x, int y, boolean temp) {
-		if (shape instanceof Pencil) {
-			imageGraphics.drawLine(lastX, lastY, x, y);
-		}
-		else if (shape instanceof Eraser) {
-			imageGraphics.setColor(Canvas.BKGD_COLOR);
-			imageGraphics.setStroke(eraserStroke);
-			imageGraphics.drawLine(lastX, lastY, x, y);
-			shape.setPoints(x, y, 30, 30);
-			canvas.setTempShape(shape);
-			canvas.resetGraphics();
-		}
-		else {
-			int width = x - firstX;
-			int height = y - firstY;
-			int widthABS = Math.abs(width);
-			int heightABS = Math.abs(height);
-			x = width > 0 ? firstX : lastX;
-			y = height > 0 ? firstY : lastY;
-
-			if (temp) {
-				canvas.setTempShape(shape);
-				if (shape instanceof Line) {
-					shape.setPoints(lastX, lastY, firstX, firstY);
-				}
-				else {
-					shape.setPoints(x, y, widthABS, heightABS);
-				}
-			}
-			else {
-				canvas.setTempShape(null);
-				if (shape instanceof Line) {
-					shape.setPoints(lastX, lastY, firstX, firstY);
-					shape.draw(imageGraphics);
-				}
-				else {
-					shape.setPoints(x, y, widthABS, heightABS);
-					shape.draw(imageGraphics);
-				}
-			}
-		}
-		canvas.repaint();
 	}
 
 	public void updateShape(DrawableShape shape) {
@@ -130,7 +80,8 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 		// however here ok here since only other place using it is in Dragged and every Drag is for sure preceeded by a click
 		imageGraphics = canvas.getImageGraphics();
 
-		draw(lastX, lastY, false);
+		shape.drawIt(imageGraphics, canvas, lastX,
+				 lastY, firstX, firstY, lastX, lastY, false);
 	}
 
 	@Override
@@ -142,7 +93,8 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 			updateDropperColor(x, y);
 		}
 
-		draw(x, y, true);
+		shape.drawIt(imageGraphics, canvas, lastX,
+			 lastY, firstX, firstY, x, y, true);
 
 		lastX = x;
 		lastY = y;
@@ -162,7 +114,8 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 			if (dropperSelected) {
 				updateDropperColor(x, y);
 			}
-			draw(x, y - OFFSET, false);
+			shape.drawIt(imageGraphics, canvas, lastX,
+					 lastY, firstX, firstY, x, y - OFFSET, false);
 		}
 	}
 

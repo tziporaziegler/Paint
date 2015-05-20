@@ -19,14 +19,14 @@ import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import shapes.DrawableShape;
-import shapes.Eraser;
-import shapes.Line;
-import shapes.Oval;
-import shapes.OvalFill;
-import shapes.Pencil;
-import shapes.Rect;
-import shapes.RectFill;
+import paint.shapes.DrawableShape;
+import paint.shapes.Eraser;
+import paint.shapes.Line;
+import paint.shapes.Oval;
+import paint.shapes.OvalFill;
+import paint.shapes.Pencil;
+import paint.shapes.Rect;
+import paint.shapes.RectFill;
 
 public class PaintFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -56,13 +56,15 @@ public class PaintFrame extends JFrame {
 
 		JLabel location = new JLabel("0,0");
 		listener = new DrawListener(canvas, chooser, location);
+		// BrushListener listener = new RectangleListener(canvas);
 		addMouseListener(listener);
 		addMouseMotionListener(listener);
 
 		addMenu();
 
 		eastPanel = new JPanel();
-		// for now using BoxLayout because only two options. If need more rows, use GridLayout(10,2).
+		// for now using BoxLayout because only two options. If need more rows,
+		// use GridLayout(10,2).
 		eastPanel.setLayout(new BoxLayout(eastPanel, BoxLayout.Y_AXIS));
 		addShapes();
 		eastPanel.add(Box.createVerticalStrut(35));
@@ -106,16 +108,17 @@ public class PaintFrame extends JFrame {
 		addShape(new RectFill(), "\u25FC");
 		addShape(new Oval(), "\u25EF");
 		addShape(new OvalFill(), "\u2B24");
-		addShape(new Eraser(), new ImageIcon(getClass().getResource("pics/eraser.png")));
+		addShape(new Eraser(),
+				new ImageIcon(getClass().getResource("pics/eraser.png")));
 		eastPanel.add(new DropperButton(listener));
 	}
 
 	private void addShape(DrawableShape shape, String unicode) {
-		eastPanel.add(new ShapeButton(shape, listener, unicode));
+		eastPanel.add(new ModeButton(shape, listener, unicode));
 	}
 
 	private void addShape(DrawableShape shape, ImageIcon image) {
-		eastPanel.add(new ShapeButton(shape, listener, image));
+		eastPanel.add(new ModeButton(shape, listener, image));
 	}
 
 	private void addLineWidths() {
@@ -127,12 +130,15 @@ public class PaintFrame extends JFrame {
 	}
 
 	private void addColorChooser() {
-		// remove unwanted, extra color chooser features like other color options and preview
+		// remove unwanted, extra color chooser features like other color
+		// options and preview
 		AbstractColorChooserPanel[] panels = chooser.getChooserPanels();
 		AbstractColorChooserPanel[] newPanels = { panels[0] };
 		chooser.setChooserPanels(newPanels);
 
-		JLabel preview = new JLabel("\u25FC\u25FC\u25FC\u25FC\u25FC", JLabel.CENTER);
+		// customize preview panel
+		JLabel preview = new JLabel("\u25FC\u25FC\u25FC\u25FC\u25FC",
+				JLabel.CENTER);
 		preview.setFont(new Font("Serif", Font.BOLD, 18));
 		chooser.setPreviewPanel(preview);
 
