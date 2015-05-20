@@ -3,6 +3,8 @@ package paint;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.Box;
@@ -14,19 +16,20 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import paint.shapes.DrawableShape;
-import paint.shapes.Eraser;
-import paint.shapes.Line;
-import paint.shapes.Oval;
-import paint.shapes.OvalFill;
-import paint.shapes.Pencil;
-import paint.shapes.Rect;
-import paint.shapes.RectFill;
+import paint.modes.Mode;
+import paint.modes.Eraser;
+import paint.modes.Line;
+import paint.modes.Oval;
+import paint.modes.OvalFill;
+import paint.modes.Pencil;
+import paint.modes.Rect;
+import paint.modes.RectFill;
 
 public class PaintFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -68,7 +71,13 @@ public class PaintFrame extends JFrame {
 		eastPanel.setLayout(new BoxLayout(eastPanel, BoxLayout.Y_AXIS));
 		addShapes();
 		eastPanel.add(Box.createVerticalStrut(35));
-		addLineWidths();
+
+		// add line widths
+		addWidth(2, "\u2500");
+		addWidth(5, "\u2500");
+		addWidth(7, "\u2500");
+		addWidth(9, "\u2500");
+		addWidth("custom");
 
 		// add the panel of shape and sizw options to the main frame
 		add(eastPanel, BorderLayout.EAST);
@@ -102,31 +111,38 @@ public class PaintFrame extends JFrame {
 	}
 
 	private void addShapes() {
-		addShape(new Pencil(), "\u270E");
-		addShape(new Line(), "\u2571");
-		addShape(new Rect(), "\u25A2");
-		addShape(new RectFill(), "\u25FC");
-		addShape(new Oval(), "\u25EF");
-		addShape(new OvalFill(), "\u2B24");
-		addShape(new Eraser(),
-				new ImageIcon(getClass().getResource("pics/eraser.png")));
+		addMode(new Pencil(), "\u270E");
+		addMode(new Line(), "\u2571");
+		addMode(new Rect(), "\u25A2");
+		addMode(new RectFill(), "\u25FC");
+		addMode(new Oval(), "\u25EF");
+		addMode(new OvalFill(), "\u2B24");
+		addMode(new Eraser(), new ImageIcon(getClass().getResource("pics/eraser.png")));
 		eastPanel.add(new DropperButton(listener));
 	}
 
-	private void addShape(DrawableShape shape, String unicode) {
-		eastPanel.add(new ModeButton(shape, listener, unicode));
+	private void addMode(Mode shape, String unicode) {
+		ModeButton mode = new ModeButton(shape, unicode);
+		mode.addActionListener(shapeListen);
+		eastPanel.add(mode);
 	}
 
-	private void addShape(DrawableShape shape, ImageIcon image) {
-		eastPanel.add(new ModeButton(shape, listener, image));
+	private void addMode(Mode shape, ImageIcon image) {
+		ModeButton mode = new ModeButton(shape, image);
+		mode.addActionListener(shapeListen);
+		eastPanel.add(mode);
 	}
 
-	private void addLineWidths() {
-		eastPanel.add(new WidthButton(2, canvas, "\u2500"));
-		eastPanel.add(new WidthButton(5, canvas, "\u2500"));
-		eastPanel.add(new WidthButton(7, canvas, "\u2501"));
-		eastPanel.add(new WidthButton(9, canvas, "\u2501"));
-		eastPanel.add(new WidthButton(canvas, "custom"));
+	private void addWidth(int width, String unicode) {
+		WidthButton button = new WidthButton(width, canvas, unicode);
+		button.addActionListener(widthListen);
+		eastPanel.add(button);
+	}
+
+	private void addWidth(String unicode) {
+		WidthButton button = new WidthButton(canvas, unicode);
+		button.addActionListener(otherListen);
+		eastPanel.add(button);
 	}
 
 	private void addColorChooser() {
@@ -137,19 +153,45 @@ public class PaintFrame extends JFrame {
 		chooser.setChooserPanels(newPanels);
 
 		// customize preview panel
-		JLabel preview = new JLabel("\u25FC\u25FC\u25FC\u25FC\u25FC",
-				JLabel.CENTER);
+		JLabel preview = new JLabel("\u25FC\u25FC\u25FC\u25FC\u25FC", JLabel.CENTER);
 		preview.setFont(new Font("Serif", Font.BOLD, 18));
 		chooser.setPreviewPanel(preview);
 
-		chooser.getSelectionModel().addChangeListener(colorChange);
+		chooser.getSelectionModel().addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				canvas.updateColor(chooser.getColor());
+			}
+		});
+
 		southPanel.add(chooser, BorderLayout.WEST);
 	}
 
-	ChangeListener colorChange = new ChangeListener() {
+	ActionListener widthListen = new ActionListener() {
 		@Override
-		public void stateChanged(ChangeEvent e) {
-			canvas.updateColor(chooser.getColor());
+		public void actionPerformed(ActionEvent e) {
+			WidthButton button = (WidthButton) e.getSource();
+			button.updateStroke();
+		}
+	};
+
+	ActionListener otherListen = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			WidthButton button = (WidthButton) e.getSource();
+			String widthS = JOptionPane.showInputDialog("Enter the stroke width:");
+			if (widthS != null) {
+				button.setWidth(Integer.valueOf(widthS));
+				button.updateStroke();
+			}
+		}
+	};
+
+	ActionListener shapeListen = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			ModeButton button = (ModeButton) e.getSource();
+			listener.updateShape(button.getShape());
 		}
 	};
 }

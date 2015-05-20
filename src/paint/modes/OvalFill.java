@@ -1,8 +1,8 @@
-package paint.shapes;
+package paint.modes;
 
 import java.awt.Graphics2D;
 
-public class OvalFill extends DrawableShape {
+public class OvalFill extends Mode {
 
 	@Override
 	public void draw(Graphics2D g2d) {

@@ -16,11 +16,11 @@ public class SaveListener implements ActionListener {
 
 	public SaveListener(Canvas canvas) {
 		this.canvas = canvas;
-		
+
 		chooser = new JFileChooser();
 		chooser.setMultiSelectionEnabled(false);
 		chooser.setAcceptAllFileFilterUsed(false);
-		
+
 		addFilter("PNG", "png");
 		addFilter("BMP", "bmp");
 		addFilter("JPG", "jpg");
@@ -33,7 +33,7 @@ public class SaveListener implements ActionListener {
 		chooser.showSaveDialog(null);
 		FileFilter chosenFilter = chooser.getFileFilter();
 		String ext = chosenFilter.getDescription().toLowerCase();
-		
+
 		File file = chooser.getSelectedFile();
 
 		if (file != null) {

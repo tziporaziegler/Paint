@@ -1,4 +1,4 @@
-package paint.shapes;
+package paint.modes;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -6,12 +6,12 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 
 import paint.Canvas;
+import paint.DrawListener;
 
-public class Eraser extends DrawableShape {
+public class Eraser extends Mode {
 
 	public final static int ERASER_HEIGHT = 30;
-	private Stroke eraserStroke = new BasicStroke(ERASER_HEIGHT,
-			BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	private Stroke eraserStroke = new BasicStroke(ERASER_HEIGHT, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
 	@Override
 	public void draw(Graphics2D g2d) {
@@ -27,15 +27,11 @@ public class Eraser extends DrawableShape {
 	}
 
 	@Override
-	public void drawIt(Graphics2D imageGraphics, Canvas canvas, int lastX,
-			int lastY, int firstX, int firstY, int x, int y, boolean temp) {
-		imageGraphics.setColor(Canvas.BKGD_COLOR);
-		imageGraphics.setStroke(eraserStroke);
-		imageGraphics.drawLine(lastX, lastY, x, y);
-		this.x = x;
-		this.y = y;
-		width = ERASER_HEIGHT;
-		height = ERASER_HEIGHT;
+	public void drawIt(DrawListener listener, Canvas canvas, Graphics2D g2d, int x, int y, boolean temp) {
+		g2d.setColor(Canvas.BKGD_COLOR);
+		g2d.setStroke(eraserStroke);
+		g2d.drawLine(listener.getLastX(), listener.getLastY(), x, y);
+		set(x, y, ERASER_HEIGHT, ERASER_HEIGHT);
 		canvas.setTempShape(this);
 		canvas.resetGraphics();
 

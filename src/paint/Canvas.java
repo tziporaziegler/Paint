@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
-import paint.shapes.DrawableShape;
+import paint.modes.Mode;
 
 public class Canvas extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -19,7 +19,7 @@ public class Canvas extends JPanel {
 	private Color color;
 	private Stroke stroke;
 
-	private DrawableShape tempShape;
+	private Mode tempShape;
 
 	public final static Color BKGD_COLOR = Color.WHITE;
 
@@ -56,25 +56,25 @@ public class Canvas extends JPanel {
 	}
 
 	// method called by JColorChooser ChangeListener
-	public void updateColor(Color color) {
+	protected void updateColor(Color color) {
 		this.color = color;
 		imageGraphics.setColor(color);
 	}
 
 	// method called by WidthButton ActionListener
-	public void updateStrokeWidth(int width) {
+	protected void updateStrokeWidth(int width) {
 		stroke = new BasicStroke(width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 		imageGraphics.setStroke(stroke);
 	}
 
 	// on Open, set image to chosen image
-	public void setImage(BufferedImage image) {
+	protected void setImage(BufferedImage image) {
 		this.image = image;
 		imageGraphics = (Graphics2D) image.getGraphics();
 		repaint();
 	}
 
-	public BufferedImage getImage() {
+	protected BufferedImage getImage() {
 		return image;
 	}
 
@@ -83,7 +83,7 @@ public class Canvas extends JPanel {
 	}
 
 	// when repaint, paint tempShape if one exists
-	public void setTempShape(DrawableShape shape) {
+	public void setTempShape(Mode shape) {
 		tempShape = shape;
 	}
 

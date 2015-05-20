@@ -10,9 +10,9 @@ import java.awt.image.BufferedImage;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 
-import paint.shapes.DrawableShape;
-import paint.shapes.Eraser;
-import paint.shapes.Pencil;
+import paint.modes.Mode;
+import paint.modes.Eraser;
+import paint.modes.Pencil;
 
 public class DrawListener implements MouseListener, MouseMotionListener {
 	private Canvas canvas;
@@ -20,8 +20,8 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 	private JLabel location;
 
 	private Graphics2D imageGraphics;
-	private DrawableShape shape;
-	
+	private Mode shape;
+
 	private boolean dropperSelected;
 
 	private int lastX;
@@ -41,7 +41,7 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 		shape = new Pencil();
 	}
 
-	public void updateShape(DrawableShape shape) {
+	public void updateShape(Mode shape) {
 		this.shape = shape;
 	}
 
@@ -80,8 +80,7 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 		// however here ok here since only other place using it is in Dragged and every Drag is for sure preceeded by a click
 		imageGraphics = canvas.getImageGraphics();
 
-		shape.drawIt(imageGraphics, canvas, lastX,
-				 lastY, firstX, firstY, lastX, lastY, false);
+		shape.drawIt(this, canvas, imageGraphics, lastX, lastY, false);
 	}
 
 	@Override
@@ -93,8 +92,7 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 			updateDropperColor(x, y);
 		}
 
-		shape.drawIt(imageGraphics, canvas, lastX,
-			 lastY, firstX, firstY, x, y, true);
+		shape.drawIt(this, canvas, imageGraphics, x, y, true);
 
 		lastX = x;
 		lastY = y;
@@ -114,8 +112,7 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 			if (dropperSelected) {
 				updateDropperColor(x, y);
 			}
-			shape.drawIt(imageGraphics, canvas, lastX,
-					 lastY, firstX, firstY, x, y - OFFSET, false);
+			shape.drawIt(this, canvas, imageGraphics, x, y - OFFSET, false);
 		}
 	}
 
@@ -139,4 +136,19 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 	public void mouseExited(MouseEvent e) {
 	}
 
+	public int getFirstX() {
+		return firstX;
+	}
+
+	public int getFirstY() {
+		return firstY;
+	}
+
+	public int getLastX() {
+		return lastX;
+	}
+
+	public int getLastY() {
+		return lastY;
+	}
 }

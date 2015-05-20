@@ -1,12 +1,13 @@
-package paint;
+package classCode;
 
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-public abstract class BrushListener implements MouseListener,
-		MouseMotionListener {
+import paint.Canvas;
+
+public abstract class BrushListener implements MouseListener, MouseMotionListener {
 	private Canvas canvas;
 
 	protected int startX;
@@ -36,7 +37,7 @@ public abstract class BrushListener implements MouseListener,
 	}
 
 	public abstract void draw(Graphics2D g);
-	
+
 	@Override
 	public void mouseMoved(MouseEvent e) {
 	}

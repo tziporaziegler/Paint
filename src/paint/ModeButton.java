@@ -1,43 +1,28 @@
 package paint;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.border.EmptyBorder;
 
-import paint.shapes.DrawableShape;
+import paint.modes.Mode;
 
 public class ModeButton extends JButton {
 	private static final long serialVersionUID = 1L;
-	private DrawListener listener;
-	private DrawableShape shape;
+	private Mode shape;
 
-	public ModeButton(DrawableShape shape, DrawListener listener) {
-		this.listener = listener;
+	public ModeButton(Mode shape, String unicode) {
 		this.shape = shape;
-		addActionListener(shapeListen);
-	}
-
-	public ModeButton(DrawableShape shape, DrawListener listener, String unicode) {
-		this(shape, listener);
 		setText(unicode);
 	}
 
-	public ModeButton(DrawableShape shape, DrawListener listener,
-			ImageIcon image) {
-		this(shape, listener);
+	public ModeButton(Mode shape, ImageIcon image) {
+		this.shape = shape;
 		setIcon(image);
 		setBackground(null);
 		setBorder(new EmptyBorder(0, 0, 0, 0));
 	}
 
-	// FIXME move out of here to canvas so only have one actionListener
-	ActionListener shapeListen = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			listener.updateShape(shape);
-		}
-	};
+	public Mode getShape() {
+		return shape;
+	}
 }

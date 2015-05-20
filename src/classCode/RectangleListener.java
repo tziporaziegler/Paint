@@ -1,6 +1,8 @@
-package paint;
+package classCode;
 
 import java.awt.Graphics2D;
+
+import paint.Canvas;
 
 public class RectangleListener extends BrushListener {
 

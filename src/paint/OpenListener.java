@@ -12,10 +12,10 @@ import javax.swing.JFileChooser;
 public class OpenListener implements ActionListener {
 	private Canvas canvas;
 
-	public OpenListener(Canvas canvas){
+	public OpenListener(Canvas canvas) {
 		this.canvas = canvas;
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		JFileChooser fileChooser = new JFileChooser();
