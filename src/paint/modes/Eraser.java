@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 
 import paint.Canvas;
-import paint.DrawListener;
 
 public class Eraser extends Mode {
 
@@ -27,14 +26,20 @@ public class Eraser extends Mode {
 	}
 
 	@Override
-	public void drawIt(DrawListener listener, Canvas canvas, Graphics2D g2d, int x, int y, boolean temp) {
+	public void drawIt(Canvas canvas, Graphics2D g2d, int x, int y, boolean temp, int firstX, int firstY, int lastX, int lastY) {
 		g2d.setColor(Canvas.BKGD_COLOR);
 		g2d.setStroke(eraserStroke);
-		g2d.drawLine(listener.getLastX(), listener.getLastY(), x, y);
+		g2d.drawLine(lastX, lastY, x, y);
 		set(x, y, ERASER_HEIGHT, ERASER_HEIGHT);
-		canvas.setTempShape(this);
+		canvas.setTempMode(this);
 		canvas.resetGraphics();
 
+		canvas.repaint();
+	}
+
+	@Override
+	public void release(Canvas canvas, Graphics2D g2d, int x, int y, boolean b, int firstX, int firstY, int lastX, int lastY) {
+		canvas.setTempMode(null);
 		canvas.repaint();
 	}
 }

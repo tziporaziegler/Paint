@@ -8,13 +8,9 @@ public class WidthButton extends JButton {
 	private int width;
 	private Canvas canvas;
 
-	public WidthButton(int width, Canvas canvas) {
+	public WidthButton(int width, Canvas canvas, String unicode) {
 		this.width = width;
 		this.canvas = canvas;
-	}
-
-	public WidthButton(int width, Canvas canvas, String unicode) {
-		this(width, canvas);
 		setText(unicode + " " + width + "p");
 	}
 
@@ -24,7 +20,8 @@ public class WidthButton extends JButton {
 	}
 
 	public WidthButton(int width, Canvas canvas, ImageIcon image) {
-		this(width, canvas);
+		this.width = width;
+		this.canvas = canvas;
 		setIcon(image);
 	}
 

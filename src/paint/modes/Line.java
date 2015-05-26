@@ -3,7 +3,6 @@ package paint.modes;
 import java.awt.Graphics2D;
 
 import paint.Canvas;
-import paint.DrawListener;
 
 public class Line extends Mode {
 
@@ -13,8 +12,17 @@ public class Line extends Mode {
 	}
 
 	@Override
-	public void drawIt(DrawListener listener, Canvas canvas, Graphics2D g2d, int x, int y, boolean temp) {
-		set(listener.getLastX(), listener.getLastY(), listener.getFirstX(), listener.getFirstY());
-		continueTemp(canvas, g2d);
+	public void drawIt(Canvas canvas, Graphics2D g2d, int x, int y, boolean temp, int firstX, int firstY, int lastX, int lastY) {
+		set(lastX, lastY, firstX, firstY);
+
+		if (temp) {
+			canvas.setTempMode(this);
+		}
+		else {
+			canvas.setTempMode(null);
+			draw(g2d);
+		}
+
+		canvas.repaint();
 	}
 }

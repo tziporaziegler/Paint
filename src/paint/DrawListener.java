@@ -11,7 +11,6 @@ import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 
 import paint.modes.Mode;
-import paint.modes.Eraser;
 import paint.modes.Pencil;
 
 public class DrawListener implements MouseListener, MouseMotionListener {
@@ -20,7 +19,7 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 	private JLabel location;
 
 	private Graphics2D imageGraphics;
-	private Mode shape;
+	private Mode mode;
 
 	private boolean dropperSelected;
 
@@ -38,11 +37,11 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 		this.canvas = canvas;
 		this.chooser = chooser;
 		this.location = location;
-		shape = new Pencil();
+		mode = new Pencil();
 	}
 
 	public void updateShape(Mode shape) {
-		this.shape = shape;
+		this.mode = shape;
 	}
 
 	public void selectDropper() {
@@ -80,7 +79,7 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 		// however here ok here since only other place using it is in Dragged and every Drag is for sure preceeded by a click
 		imageGraphics = canvas.getImageGraphics();
 
-		shape.drawIt(this, canvas, imageGraphics, lastX, lastY, false);
+		mode.drawIt(canvas, imageGraphics, lastX, lastY, false, firstX, firstY, lastX, lastY);
 	}
 
 	@Override
@@ -88,32 +87,15 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 		int x = e.getX();
 		int y = e.getY() - OFFSET;
 
-		if (dropperSelected) {
-			updateDropperColor(x, y);
-		}
-
-		shape.drawIt(this, canvas, imageGraphics, x, y, true);
+		mode.drawIt(canvas, imageGraphics, x, y, true, firstX, firstY, lastX, lastY);
 
 		lastX = x;
 		lastY = y;
 	}
 
-	// FIXME remove instanceof
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		int x = e.getX();
-		int y = e.getY();
-
-		if (shape instanceof Eraser) {
-			canvas.setTempShape(null);
-			canvas.repaint();
-		}
-		else {
-			if (dropperSelected) {
-				updateDropperColor(x, y);
-			}
-			shape.drawIt(this, canvas, imageGraphics, x, y - OFFSET, false);
-		}
+		mode.release(canvas, imageGraphics, e.getX(), e.getY() - OFFSET, false, firstX, firstY, lastX, lastY);
 	}
 
 	@Override
@@ -123,9 +105,6 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (dropperSelected) {
-			updateDropperColor(e.getX(), e.getY());
-		}
 	}
 
 	@Override
@@ -134,21 +113,5 @@ public class DrawListener implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-	}
-
-	public int getFirstX() {
-		return firstX;
-	}
-
-	public int getFirstY() {
-		return firstY;
-	}
-
-	public int getLastX() {
-		return lastX;
-	}
-
-	public int getLastY() {
-		return lastY;
 	}
 }

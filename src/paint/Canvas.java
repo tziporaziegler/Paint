@@ -19,7 +19,7 @@ public class Canvas extends JPanel {
 	private Color color;
 	private Stroke stroke;
 
-	private Mode tempShape;
+	private Mode tempMode;
 
 	public final static Color BKGD_COLOR = Color.WHITE;
 
@@ -50,8 +50,8 @@ public class Canvas extends JPanel {
 		// if small image, don't care when done, so can leave observer as null
 		g2d.drawImage(image, 0, 0, null);
 
-		if (tempShape != null) {
-			tempShape.draw(g2d);
+		if (tempMode != null) {
+			tempMode.draw(g2d);
 		}
 	}
 
@@ -82,9 +82,9 @@ public class Canvas extends JPanel {
 		return imageGraphics;
 	}
 
-	// when repaint, paint tempShape if one exists
-	public void setTempShape(Mode shape) {
-		tempShape = shape;
+	// when repaint, paint tempMode if one exists
+	public void setTempMode(Mode mode) {
+		tempMode = mode;
 	}
 
 	public void resetGraphics() {
