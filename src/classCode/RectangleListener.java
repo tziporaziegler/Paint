@@ -1,4 +1,4 @@
-package classCode;
+package classcode;
 
 import java.awt.Graphics2D;
 
