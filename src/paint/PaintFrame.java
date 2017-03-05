@@ -22,9 +22,9 @@ import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import paint.modes.Mode;
 import paint.modes.Eraser;
 import paint.modes.Line;
+import paint.modes.Mode;
 import paint.modes.Oval;
 import paint.modes.OvalFill;
 import paint.modes.Pencil;
@@ -38,8 +38,6 @@ public class PaintFrame extends JFrame {
 	private JColorChooser chooser;
 	private JPanel eastPanel; // hold all the shape and line options
 	private JPanel southPanel;
-
-	private JMenuBar menu;
 
 	public PaintFrame() {
 		int width = 800;
@@ -92,7 +90,6 @@ public class PaintFrame extends JFrame {
 	}
 
 	private void addMenu() {
-		menu = new JMenuBar();
 		JMenu file = new JMenu("File");
 		file.setMnemonic(KeyEvent.VK_F);
 
@@ -106,6 +103,7 @@ public class PaintFrame extends JFrame {
 		open.addActionListener(new OpenListener(canvas));
 		file.add(open);
 
+		JMenuBar menu = new JMenuBar();
 		menu.add(file);
 		setJMenuBar(menu);
 	}
@@ -167,7 +165,7 @@ public class PaintFrame extends JFrame {
 		southPanel.add(chooser, BorderLayout.WEST);
 	}
 
-	ActionListener widthListen = new ActionListener() {
+	private ActionListener widthListen = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			WidthButton button = (WidthButton) e.getSource();
@@ -175,7 +173,7 @@ public class PaintFrame extends JFrame {
 		}
 	};
 
-	ActionListener otherListen = new ActionListener() {
+	private ActionListener otherListen = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			WidthButton button = (WidthButton) e.getSource();
@@ -187,7 +185,7 @@ public class PaintFrame extends JFrame {
 		}
 	};
 
-	ActionListener shapeListen = new ActionListener() {
+	private ActionListener shapeListen = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			ModeButton button = (ModeButton) e.getSource();
