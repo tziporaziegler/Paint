@@ -39,6 +39,34 @@ public class PaintFrame extends JFrame {
 	private JPanel eastPanel; // hold all the shape and line options
 	private JPanel southPanel;
 
+	private ActionListener widthListen = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			WidthButton button = (WidthButton) e.getSource();
+			button.updateStroke();
+		}
+	};
+
+	private ActionListener otherListen = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			WidthButton button = (WidthButton) e.getSource();
+			String widthS = JOptionPane.showInputDialog("Enter the stroke width:");
+			if (widthS != null) {
+				button.setWidth(Integer.valueOf(widthS));
+				button.updateStroke();
+			}
+		}
+	};
+
+	private ActionListener shapeListen = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			ModeButton button = (ModeButton) e.getSource();
+			listener.updateShape(button.getShape());
+		}
+	};
+	
 	public PaintFrame() {
 		int width = 800;
 		int height = 620;
@@ -164,32 +192,4 @@ public class PaintFrame extends JFrame {
 
 		southPanel.add(chooser, BorderLayout.WEST);
 	}
-
-	private ActionListener widthListen = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			WidthButton button = (WidthButton) e.getSource();
-			button.updateStroke();
-		}
-	};
-
-	private ActionListener otherListen = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			WidthButton button = (WidthButton) e.getSource();
-			String widthS = JOptionPane.showInputDialog("Enter the stroke width:");
-			if (widthS != null) {
-				button.setWidth(Integer.valueOf(widthS));
-				button.updateStroke();
-			}
-		}
-	};
-
-	private ActionListener shapeListen = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			ModeButton button = (ModeButton) e.getSource();
-			listener.updateShape(button.getShape());
-		}
-	};
 }

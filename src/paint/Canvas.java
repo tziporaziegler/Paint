@@ -12,7 +12,9 @@ import javax.swing.JPanel;
 import paint.modes.Mode;
 
 public class Canvas extends JPanel {
+	public static final Color BKGD_COLOR = Color.WHITE;
 	private static final long serialVersionUID = 1L;
+		
 	private BufferedImage image;
 	private Graphics2D imageGraphics;
 
@@ -21,11 +23,10 @@ public class Canvas extends JPanel {
 
 	private Mode tempMode;
 
-	public final static Color BKGD_COLOR = Color.WHITE;
-
 	public Canvas(int width, int height) {
 		// use buffer to save pixels so still there after minimize
-		// save byte of memory by using the TYPE_INT_RGB because leaving out alpha part. Have less colors, but don't need more.
+		// save byte of memory by using the TYPE_INT_RGB because leaving out alpha part. Have less colors,
+		// but don't need more.
 		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
 		imageGraphics = (Graphics2D) image.getGraphics();

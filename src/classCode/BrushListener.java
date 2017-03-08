@@ -8,12 +8,12 @@ import java.awt.event.MouseMotionListener;
 import paint.Canvas;
 
 public abstract class BrushListener implements MouseListener, MouseMotionListener {
-	private Canvas canvas;
-
 	protected int startX;
 	protected int startY;
 	protected int lastX;
 	protected int lastY;
+	
+	private Canvas canvas;
 
 	public BrushListener(Canvas canvas) {
 		this.canvas = canvas;

@@ -9,7 +9,7 @@ import paint.Canvas;
 
 public class Eraser extends Mode {
 
-	public final static int ERASER_HEIGHT = 30;
+	public static final int ERASER_HEIGHT = 30;
 	private Stroke eraserStroke = new BasicStroke(ERASER_HEIGHT, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
 	@Override
@@ -26,7 +26,8 @@ public class Eraser extends Mode {
 	}
 
 	@Override
-	public void drawIt(Canvas canvas, Graphics2D g2d, int x, int y, boolean temp, int firstX, int firstY, int lastX, int lastY) {
+	public void drawIt(Canvas canvas, Graphics2D g2d, int x, int y, boolean temp, int firstX, int firstY, int lastX,
+			int lastY) {
 		g2d.setColor(Canvas.BKGD_COLOR);
 		g2d.setStroke(eraserStroke);
 		g2d.drawLine(lastX, lastY, x, y);
@@ -38,7 +39,8 @@ public class Eraser extends Mode {
 	}
 
 	@Override
-	public void release(Canvas canvas, Graphics2D g2d, int x, int y, boolean b, int firstX, int firstY, int lastX, int lastY) {
+	public void release(Canvas canvas, Graphics2D g2d, int x, int y, boolean b, int firstX, int firstY, int lastX,
+			int lastY) {
 		canvas.setTempMode(null);
 		canvas.repaint();
 	}
